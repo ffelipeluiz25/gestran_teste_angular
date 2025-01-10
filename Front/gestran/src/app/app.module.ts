@@ -12,6 +12,7 @@ import { LayoutComponent } from './pages/layout/layout.component';
 import { AppRoutingModule } from './app.routes';
 import { HomeComponent } from './pages/home/home.component';
 import { provideHttpClient, withInterceptorsFromDi, withFetch } from '@angular/common/http';
+import { ChecklistComponent } from './pages/checklist/checklist.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { provideHttpClient, withInterceptorsFromDi, withFetch } from '@angular/c
     LoginComponent,
     LayoutComponent,
     HomeComponent,
+    ChecklistComponent,
   ],
   imports: [
     BrowserModule,

@@ -6,20 +6,20 @@ namespace GestranApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AutenticaApiController : Controller
+    public class LoginController : Controller
     {
         private readonly ILogger<UsuarioController> _logger;
         private readonly JwtService _jwtService;
 
-        public AutenticaApiController(ILogger<UsuarioController> logger, JwtService jwtService)
+        public LoginController(ILogger<UsuarioController> logger, JwtService jwtService)
         {
             _logger = logger;
             _jwtService = jwtService;
         }
 
         [AllowAnonymous]
-        [HttpPost("LoginApi")]
-        public async Task<ActionResult<LoginResponseModel>> Login(LoginRequestModel request)
+        [HttpPost]
+        public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
         {
             var result = await _jwtService.Authneticate(request);
             if (result is null)

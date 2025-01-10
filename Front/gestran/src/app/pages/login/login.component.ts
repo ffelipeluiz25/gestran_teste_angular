@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoginService } from '../../services/login.service';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,8 @@ import swal from 'sweetalert2';
 export class LoginComponent implements OnInit {
 
   public formLogin: FormGroup;
-
+  @Output() enterPress = new EventEmitter<void>();
+  
   constructor(private fb: FormBuilder, private loginService: LoginService, private route: Router) {
     this.formLogin = this.criarFormLogin();
   }
@@ -22,6 +23,11 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  @HostListener('keydown.enter')
+  onEnterPress() {
+    this.enterPress.emit();
+    this.submitForm();
+  }
 
   public criarFormLogin(): FormGroup {
     return this.fb.group({
@@ -30,28 +36,19 @@ export class LoginComponent implements OnInit {
     })
   }
 
-
   public isFormControlInvalid(controlName: string): boolean {
     return !!(this.formLogin.get(controlName)?.invalid && this.formLogin.get(controlName)?.touched)
   }
-
 
   public submitForm() {
     const { username, password } = this.formLogin.value;
     this.formLogin.reset;
 
-    this.loginService.login(username, password).subscribe(
-      res => {
-        swal.fire('', 'Login efetuado com sucesso', 'success')
-          .then((result) => {
-            this.route.navigate(['/home']);
-          });
-
-      },
-      err => {
-        swal.fire('', err, 'error');
-      }
-    )
+    this.loginService.login(username, password).subscribe(res => {
+      this.route.navigate(['home']);
+    }, err => {
+      swal.fire('', err, 'error');
+    });
   }
 
 }

@@ -1,13 +1,10 @@
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
-@Injectable({
-    providedIn: 'root',
-})
-
+@Injectable({ providedIn: 'root', })
 
 export class LoginService {
 
@@ -15,17 +12,11 @@ export class LoginService {
 
     }
 
-    public login(username: string, password: string): Observable<any> {
-        const url = `${environment.baseUrlBackend}/weatherforecast`;
-        const headers = new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        });
-        return this.httpClient.post(url, { username, password }, { responseType: 'json', headers: headers }).pipe(
+    public login(login: string, senha: string): Observable<any> {
+        const url = `${environment.baseUrlBackend}/login`;
+        return this.httpClient.post(url, { login, senha }, { responseType: 'json' }).pipe(
             map((data) => {
-                debugger;
-                //this.setTokenLocalStorage(data);
-                this.setTokenLocalStorage({ type: 'json', token: 'dasdsadsadsadsadadsadasdadaad5asda5s61das541d5a4sd8as1das1dsa1sadda' });
+                this.setTokenLocalStorage(data);
             }),
             catchError((err) => {
                 this.removerTokenLocalStorage();
@@ -38,12 +29,18 @@ export class LoginService {
         return localStorage.getItem(environment.token);
     }
 
-    private setTokenLocalStorage(response: any): void {
-        const { type, token, _ } = response;
-        localStorage.setItem(environment.token, token)
+    public getTipoUsuario(): string | null {
+        return localStorage.getItem(environment.tipoUsuario);
     }
 
-    private removerTokenLocalStorage(): void {
+    private setTokenLocalStorage(response: any): void {
+        const { acessToken, tipoUsuario } = response;
+        localStorage.setItem(environment.token, acessToken);
+        localStorage.setItem(environment.tipoUsuario, tipoUsuario);
+    }
+
+    public removerTokenLocalStorage(): void {
         localStorage.removeItem(environment.token);
+        localStorage.removeItem(environment.tipoUsuario);
     }
 }

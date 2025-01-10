@@ -19,7 +19,7 @@ namespace GestranApi.JWT
             _configuration = configuration;
         }
 
-        public async Task<LoginResponseModel?> Authneticate(LoginRequestModel request)
+        public async Task<LoginResponse?> Authneticate(LoginRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Senha))
                 return null;
@@ -27,8 +27,6 @@ namespace GestranApi.JWT
             var userAccont = await _dbContext.Usuario.FirstOrDefaultAsync(x => x.Login.Equals(request.Login));
             if (userAccont is null || !PasswordCrypt.VerificaPassword(request.Senha, userAccont.Senha))
                 return null;
-
-
 
             var issuer = _configuration["JwtConfig:Issuer"];
             var audience = _configuration["JwtConfig:Audience"];
@@ -47,13 +45,11 @@ namespace GestranApi.JWT
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
             var accessToken = tokenHandler.WriteToken(securityToken);
-            return new LoginResponseModel
+            return new LoginResponse
             {
                 AcessToken = accessToken,
-                NomeUsuario = request.Login,
-                ExpiraEmSegundos = (int)expiracaoTempoToken.Subtract(DateTime.UtcNow).TotalSeconds
+                TipoUsuario = PasswordCrypt.GerarHashMd5(userAccont.IdTipoUsuario.ToString())
             };
-
         }
 
     }

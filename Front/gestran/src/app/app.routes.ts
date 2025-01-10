@@ -4,6 +4,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { NgModule } from '@angular/core';
 import { LayoutComponent } from './pages/layout/layout.component';
 import { HomeComponent } from './pages/home/home.component';
+import { ChecklistComponent } from './pages/checklist/checklist.component';
 
 export const routes: Routes = [
     { path: '', component: LayoutComponent, canActivate: [AuthGuard] },
@@ -13,7 +14,7 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
             { path: 'home', component: HomeComponent },
-            //{ path: 'clients', loadChildren: () => import('./pages/clients/clients.module').then(m => m.ClientsModule) }
+            { path: 'checklist', component: ChecklistComponent },
         ]
     },
     { path: '**', redirectTo: 'login' }
