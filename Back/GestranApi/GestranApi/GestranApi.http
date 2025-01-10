@@ -1,0 +1,6 @@
+@GestranApi_HostAddress = http://localhost:5024
+
+GET {{GestranApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

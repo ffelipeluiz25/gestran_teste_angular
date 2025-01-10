@@ -1,21 +1,21 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
 import { LoginService } from '../../services/login.service';
 import { CommonModule } from '@angular/common';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
-  imports: [CommonModule, ReactiveFormsModule ],
+  imports: [CommonModule, ReactiveFormsModule],
 })
 export class LoginComponent implements OnInit {
 
   public formLogin: FormGroup;
 
-  constructor(private fb: FormBuilder, private loginService: LoginService, private route: Router, private toast: ToastrService) {
+  constructor(private fb: FormBuilder, private loginService: LoginService, private route: Router) {
     this.formLogin = this.criarFormLogin();
   }
 
@@ -42,11 +42,14 @@ export class LoginComponent implements OnInit {
 
     this.loginService.login(username, password).subscribe(
       res => {
-        this.toast.success("Login efetuado com sucesso");
-        this.route.navigate(['']);
+        swal.fire('', 'Login efetuado com sucesso', 'success')
+          .then((result) => {
+            this.route.navigate(['/home']);
+          });
+
       },
       err => {
-        this.toast.error(err);
+        swal.fire('', err, 'error');
       }
     )
   }
