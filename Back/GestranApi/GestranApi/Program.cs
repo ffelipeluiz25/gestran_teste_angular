@@ -1,4 +1,6 @@
 using GestranApi.Context;
+using GestranApi.Helpers;
+using GestranApi.Helpers.Configuration;
 using GestranApi.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -8,12 +10,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DbConnection");
-
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.DocumentFilter<LowercaseDocumentFilter>();
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
@@ -92,6 +95,8 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<JwtService>();
+builder.Services.ResolveDependenciesRepositories();
+builder.Services.ResolveDependenciesServices();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

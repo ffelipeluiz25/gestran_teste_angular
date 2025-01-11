@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace GestranApi.Models.Entidades
 {
-    public class ChecklisItem
+    public class ChecklistItem
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,5 +13,8 @@ namespace GestranApi.Models.Entidades
         [ForeignKey("fkChecklistItem_Item")]
         public int IdItem { get; set; }
         public Item Item { get; set; }
+        public int IdUsuarioAlteracao { get; set; }
+        public Usuario UsuarioAlteracao { get; set; }
+        public bool Executado { get; set; }
     }
 }

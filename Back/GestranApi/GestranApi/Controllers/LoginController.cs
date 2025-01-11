@@ -8,10 +8,10 @@ namespace GestranApi.Controllers
     [Route("api/[controller]")]
     public class LoginController : Controller
     {
-        private readonly ILogger<UsuarioController> _logger;
+        private readonly ILogger<LoginController> _logger;
         private readonly JwtService _jwtService;
 
-        public LoginController(ILogger<UsuarioController> logger, JwtService jwtService)
+        public LoginController(ILogger<LoginController> logger, JwtService jwtService)
         {
             _logger = logger;
             _jwtService = jwtService;
@@ -21,7 +21,7 @@ namespace GestranApi.Controllers
         [HttpPost]
         public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
         {
-            var result = await _jwtService.Authneticate(request);
+            var result = await _jwtService.Authenticate(request);
             if (result is null)
                 return Unauthorized();
 

@@ -19,7 +19,7 @@ namespace GestranApi.JWT
             _configuration = configuration;
         }
 
-        public async Task<LoginResponse?> Authneticate(LoginRequest request)
+        public async Task<LoginResponse?> Authenticate(LoginRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Login) || string.IsNullOrWhiteSpace(request.Senha))
                 return null;
@@ -47,8 +47,9 @@ namespace GestranApi.JWT
             var accessToken = tokenHandler.WriteToken(securityToken);
             return new LoginResponse
             {
+                IdUsuarioLogado = userAccont.Id,
                 AcessToken = accessToken,
-                TipoUsuario = PasswordCrypt.GerarHashMd5(userAccont.IdTipoUsuario.ToString())
+                TipoUsuario = userAccont.IdTipoUsuario.ToString()
             };
         }
 

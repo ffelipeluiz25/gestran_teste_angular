@@ -7,6 +7,8 @@ namespace GestranApi.Models.Entidades
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [MaxLength(50)]
+        public string Descricao { get; set; }
         [ForeignKey("fkChecklist_UsuarioExecutor")]
         public int? IdUsuarioExecutor { get; set; }
         public Usuario? UsuarioExecutor { get; set; }
@@ -18,6 +20,6 @@ namespace GestranApi.Models.Entidades
         [ForeignKey("fkChecklist_UsuarioAlteracao")]
         public int IdUsuarioAlteracao { get; set; }
         public Usuario UsuarioAlteracao { get; set; }
-        public List<ChecklisItem> ChecklisItens { get; set; }
+        public List<ChecklistItem> ChecklistItens { get; set; }
     }
 }

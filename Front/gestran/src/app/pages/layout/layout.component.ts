@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { LoginService } from '../../services/login.service';
+import { LocalStorageService } from '../../services/localstorage.service';
 
 @Component({
   selector: 'app-layout',
@@ -10,13 +10,13 @@ import { LoginService } from '../../services/login.service';
 })
 export class LayoutComponent implements OnInit {
 
-  constructor(private loginService: LoginService, private route: Router) { }
+  constructor(private route: Router, private localStorageService: LocalStorageService) { }
 
   ngOnInit(): void {
   }
 
   sair() {
-    this.loginService.removerTokenLocalStorage();
+    this.localStorageService.removerTokenLocalStorage();
     this.route.navigate(['login']);
   }
 

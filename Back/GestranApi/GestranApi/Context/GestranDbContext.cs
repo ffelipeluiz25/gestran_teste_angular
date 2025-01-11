@@ -9,17 +9,21 @@ namespace GestranApi.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Usuario>()
-                .HasKey(u => u.Id);
+                       .HasKey(u => u.Id);
 
             modelBuilder.Entity<TipoUsuario>()
                        .HasKey(u => u.Id);
-
 
             modelBuilder.Entity<Status>()
                        .HasKey(u => u.Id);
 
             modelBuilder.Entity<Item>()
                        .HasKey(u => u.Id);
+
+            modelBuilder.Entity<Item>()
+                       .HasOne(o => o.UsuarioAlteracao).WithMany()
+                       .HasForeignKey(c => c.IdUsuarioAlteracao)
+                       .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Checklist>()
                        .HasKey(u => u.Id);
@@ -39,20 +43,26 @@ namespace GestranApi.Context
                        .HasForeignKey(c => c.IdStatus)
                        .OnDelete(DeleteBehavior.Restrict); ;
 
-            modelBuilder.Entity<ChecklisItem>()
+            modelBuilder.Entity<ChecklistItem>()
                        .HasKey(u => u.Id);
 
-            modelBuilder.Entity<ChecklisItem>()
-                    .HasOne(o => o.Checklist) // Relacionamento (1 para muitos)
-                    .WithMany(c => c.ChecklisItens) // Relacionamento inverso
-                    .HasForeignKey(o => o.IdChecklist) // Chave estrangeira
-                    .OnDelete(DeleteBehavior.Cascade); // Comportamento de exclusão
 
-            modelBuilder.Entity<ChecklisItem>()
-                         .HasOne(o => o.Item) // Relacionamento (1 para muitos)
-                         .WithMany(c => c.ItensChecklist) // Relacionamento inverso
-                         .HasForeignKey(o => o.IdItem) // Chave estrangeira
-                         .OnDelete(DeleteBehavior.Cascade); // Comportamento de exclusão
+            modelBuilder.Entity<ChecklistItem>()
+                       .HasOne(o => o.UsuarioAlteracao).WithMany()
+                       .HasForeignKey(c => c.IdUsuarioAlteracao)
+                       .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ChecklistItem>()
+                       .HasOne(o => o.Checklist) 
+                       .WithMany(c => c.ChecklistItens) 
+                       .HasForeignKey(o => o.IdChecklist) 
+                       .OnDelete(DeleteBehavior.Cascade); 
+
+            modelBuilder.Entity<ChecklistItem>()
+                       .HasOne(o => o.Item) 
+                       .WithMany(c => c.ItensChecklist)
+                       .HasForeignKey(o => o.IdItem) 
+                       .OnDelete(DeleteBehavior.Cascade);
         }
 
         #region DbSet
@@ -62,7 +72,7 @@ namespace GestranApi.Context
         public DbSet<Status> Status { get; set; }
         public DbSet<Item> Item { get; set; }
         public DbSet<Checklist> Checklist { get; set; }
-        public DbSet<ChecklisItem> ChecklisItem { get; set; }
+        public DbSet<ChecklistItem> ChecklistItem { get; set; }
 
         #endregion
 

@@ -1,0 +1,22 @@
+<div class="container">
+    <form [formGroup]="formChecklist" (ngSubmit)="saveNovoChecklist()">
+        <div class="mb-3">
+            <label class="form-label">Descrição</label>
+            <input #descricaoField type="text" [(ngModel)]="descricao" class="form-control" formControlName="descricao">
+            <div class="form-text text-danger" *ngIf="isFormControlInvalid('descricao')">
+                O descrição é obrigatório!
+            </div>
+        </div>
+        <div class="mb-3" *ngIf="Itens && Itens.length > 0">
+            <div *ngFor="let item of Itens">
+                <label>
+                    <input type="checkbox"  [(ngModel)]="item.isSelected"  formControlName="algumCheckFoiMarcado" (change)="onCheckboxChange()" />
+                    {{ item.nome }}
+                </label>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Salvar</button>
+        </div>
+    </form>
+</div>

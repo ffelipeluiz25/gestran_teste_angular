@@ -21,29 +21,6 @@ namespace GestranApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GestranApi.Models.Entidades.ChecklisItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("IdChecklist")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdItem")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdChecklist");
-
-                    b.HasIndex("IdItem");
-
-                    b.ToTable("ChecklisItem");
-                });
-
             modelBuilder.Entity("GestranApi.Models.Entidades.Checklist", b =>
                 {
                     b.Property<int>("Id")
@@ -51,6 +28,11 @@ namespace GestranApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
@@ -72,6 +54,37 @@ namespace GestranApi.Migrations
                     b.ToTable("Checklist");
                 });
 
+            modelBuilder.Entity("GestranApi.Models.Entidades.ChecklistItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Executado")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("IdChecklist")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdItem")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdUsuarioAlteracao")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdChecklist");
+
+                    b.HasIndex("IdItem");
+
+                    b.HasIndex("IdUsuarioAlteracao");
+
+                    b.ToTable("ChecklistItem");
+                });
+
             modelBuilder.Entity("GestranApi.Models.Entidades.Item", b =>
                 {
                     b.Property<int>("Id")
@@ -79,6 +92,9 @@ namespace GestranApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdUsuarioAlteracao")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -91,6 +107,8 @@ namespace GestranApi.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdUsuarioAlteracao");
 
                     b.ToTable("Item");
                 });
@@ -162,25 +180,6 @@ namespace GestranApi.Migrations
                     b.ToTable("Usuario");
                 });
 
-            modelBuilder.Entity("GestranApi.Models.Entidades.ChecklisItem", b =>
-                {
-                    b.HasOne("GestranApi.Models.Entidades.Checklist", "Checklist")
-                        .WithMany("ChecklisItens")
-                        .HasForeignKey("IdChecklist")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GestranApi.Models.Entidades.Item", "Item")
-                        .WithMany("ItensChecklist")
-                        .HasForeignKey("IdItem")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Checklist");
-
-                    b.Navigation("Item");
-                });
-
             modelBuilder.Entity("GestranApi.Models.Entidades.Checklist", b =>
                 {
                     b.HasOne("GestranApi.Models.Entidades.Status", "Status")
@@ -207,9 +206,47 @@ namespace GestranApi.Migrations
                     b.Navigation("UsuarioExecutor");
                 });
 
+            modelBuilder.Entity("GestranApi.Models.Entidades.ChecklistItem", b =>
+                {
+                    b.HasOne("GestranApi.Models.Entidades.Checklist", "Checklist")
+                        .WithMany("ChecklistItens")
+                        .HasForeignKey("IdChecklist")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestranApi.Models.Entidades.Item", "Item")
+                        .WithMany("ItensChecklist")
+                        .HasForeignKey("IdItem")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestranApi.Models.Entidades.Usuario", "UsuarioAlteracao")
+                        .WithMany()
+                        .HasForeignKey("IdUsuarioAlteracao")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Checklist");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("UsuarioAlteracao");
+                });
+
+            modelBuilder.Entity("GestranApi.Models.Entidades.Item", b =>
+                {
+                    b.HasOne("GestranApi.Models.Entidades.Usuario", "UsuarioAlteracao")
+                        .WithMany()
+                        .HasForeignKey("IdUsuarioAlteracao")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UsuarioAlteracao");
+                });
+
             modelBuilder.Entity("GestranApi.Models.Entidades.Checklist", b =>
                 {
-                    b.Navigation("ChecklisItens");
+                    b.Navigation("ChecklistItens");
                 });
 
             modelBuilder.Entity("GestranApi.Models.Entidades.Item", b =>

@@ -11,6 +11,8 @@ namespace GestranApi.Models.Entidades
         public string Nome { get; set; }
         [MaxLength(200)]
         public string Observacao { get; set; }
-        public List<ChecklisItem> ItensChecklist { get; set; }
+        public int IdUsuarioAlteracao { get; set; }
+        public Usuario UsuarioAlteracao { get; set; }
+        public List<ChecklistItem> ItensChecklist { get; set; }
     }
 }
