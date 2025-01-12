@@ -7,7 +7,6 @@ import { Router, RouterModule } from '@angular/router';
 import { ChecklistNewComponent } from '../new/checklist-new.component';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { LocalStorageService } from '../../../services/localstorage.service';
-import { errorContext } from 'rxjs/internal/util/errorContext';
 
 @Component({
   selector: 'app-checklist',
@@ -22,17 +21,55 @@ export class ChecklistComponent implements OnInit {
   public typeStartTest: number = 0;
   public modalNovoChecklist: NgbModalRef | null = null;
   public habilitaBotaoCadastro: boolean = false;
+  public habilitaBotaoAssumeExecucao: boolean = false;
+  public habilitaBotaoExclusao: boolean = false;
   constructor(private checklistService: ChecklistService, private route: Router, private modalService: NgbModal, private localStorageService: LocalStorageService) { }
 
   ngOnInit(): void {
+    this.carregarTela();
+  }
 
+  public carregarTela() {
     let tipoUsuario = Number(this.localStorageService.getTipoUsuario());
     let idUsuarioLogado = Number(this.localStorageService.getIdUsuarioLogado());
-    if (tipoUsuario == 1)
+    if (tipoUsuario == 1){
       this.habilitaBotaoCadastro = true;
+      this.habilitaBotaoExclusao = true;
+    }
+    else
+      this.habilitaBotaoAssumeExecucao = true;
+
     this.checklistService.listarchecklist(tipoUsuario, idUsuarioLogado).subscribe(
       res => { this.checklist = res; },
     )
+  }
+
+  public executarChecklist(check: Checklist) {
+
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: `Deseja assumir a execução do checklist de id: ${check.id}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, confirmar!',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.checklistService.assumirExecucaoChecklist(check).subscribe(
+          res => {
+            Swal.fire('Confirmado!', `Você agora é responsável pelo checklist ${check.descricao}!`, 'success');
+            this.carregarTela();
+          },
+          err => {
+            Swal.fire('Cancelado!', 'Erro ao tentar assumir a execução do checklist.', 'error');
+          }
+        )
+      } else {
+        return;
+      }
+    });
   }
 
   public removerCheck(checkId: any) {

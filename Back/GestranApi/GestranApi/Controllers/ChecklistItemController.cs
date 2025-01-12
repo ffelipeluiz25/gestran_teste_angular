@@ -27,6 +27,14 @@ namespace GestranApi.Controllers
             return Ok(retornoApi);
         }
 
+        [HttpGet("ListarPorIdChecklist/{IdChecklist}")]
+        [Authorize]
+        public IActionResult ListarPorIdChecklist(int IdChecklist)
+        {
+            var retornoApi = _checklistItemService.ListarPorIdChecklist(IdChecklist);
+            return Ok(retornoApi);
+        }
+
         [HttpGet("ListarPorId/{id}")]
         [Authorize]
         public IActionResult ListarPorId(int id)

@@ -48,6 +48,7 @@ namespace GestranApi.JWT
             return new LoginResponse
             {
                 IdUsuarioLogado = userAccont.Id,
+                NomeUsuario = userAccont.NomeCompleto,
                 AcessToken = accessToken,
                 TipoUsuario = userAccont.IdTipoUsuario.ToString()
             };

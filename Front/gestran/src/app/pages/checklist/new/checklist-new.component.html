@@ -10,7 +10,8 @@
         <div class="mb-3" *ngIf="Itens && Itens.length > 0">
             <div *ngFor="let item of Itens">
                 <label>
-                    <input type="checkbox"  [(ngModel)]="item.isSelected"  formControlName="algumCheckFoiMarcado" (change)="onCheckboxChange()" />
+                    <input type="checkbox" [(ngModel)]="item.isSelected" formControlName="algumCheckFoiMarcado"
+                        (change)="onCheckboxChange()" />
                     {{ item.nome }}
                 </label>
             </div>

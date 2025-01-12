@@ -1,0 +1,7 @@
+.custom-disabled {
+    background-color: #e0e0e0;
+    color: #aaa;
+    border-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }

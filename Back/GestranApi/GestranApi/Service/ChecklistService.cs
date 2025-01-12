@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using GestranApi.DTOs;
 using GestranApi.DTOs.Checklist;
 using GestranApi.DTOs.Item;
 using GestranApi.Helpers.Enumeradores;
 using GestranApi.Models.Entidades;
-using GestranApi.Repository;
 using GestranApi.Repository.Interface;
 using GestranApi.Service.Interface;
 namespace GestranApi.Service
@@ -49,5 +49,9 @@ namespace GestranApi.Service
             return _mapper.Map<ChecklistDTO>(checklist);
         }
 
+        public RetornoApiDTO AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request)
+        {
+            return _checklistRepository.AssumeExecucaoChecklist(request);
+        }
     }
 }

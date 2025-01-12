@@ -1,0 +1,64 @@
+<div class="container">
+    <div class="d-flex justify-content-between">
+        <h3>
+            Checklist
+        </h3>
+    </div>
+    <hr>
+    <form [formGroup]="formChecklist" (ngSubmit)="updateChecklist()">
+        <div class="row">
+            <div class="col-md-2">
+                <label class="form-label">Id</label>
+                <input type="text" [disabled]="isDisabled" [ngClass]="{ 'custom-disabled': isDisabled }"
+                    class="form-control" formControlName="id" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Descrição</label>
+                <input type="text" class="form-control" formControlName="descricao">
+                <div class="form-text text-danger" *ngIf="isFormControlInvalid('descricao')">O descrição é obrigatório
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5>Itens para realizar checklist</h5>
+                <div class="mb-3" *ngIf="listaChecklistItem && listaChecklistItem.length > 0">
+                    <div *ngFor="let chkItem of listaChecklistItem">
+                        <label>
+                            <input type="checkbox" />
+                            {{ chkItem.nomeItem }}
+                        </label>
+                        <button type="button" class="btn btn-sm mb-1" title="Detalhes do Item"
+                            (click)="openModalDetalhesItem(detalhesItemModal, chkItem)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                                <path
+                                    d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                            </svg>
+                        </button>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-between">
+            <div class="col-12 col-md-6">
+                <button class="btn btn-secondary" routerLink="/checklist">
+                    Voltar
+                </button>
+            </div>
+            <div class="col-12 col-md-6 text-end">
+                <button type="submit" class="btn btn-primary" [disabled]="!formChecklist.valid">Salvar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<ng-template #detalhesItemModal let-modal data-back="">
+    <div class="modal-header">
+        <h4 class="modal-title">Detalhe do item</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <label>{{observacaoItem}}.</label>
+    </div>
+</ng-template>

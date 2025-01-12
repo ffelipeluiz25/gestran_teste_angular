@@ -17,16 +17,22 @@ export class LocalStorageService {
         return localStorage.getItem(environment.idUsuarioLogado);
     }
 
+    public getNomeUsuario(): string | null {
+        return localStorage.getItem(environment.nomeUsuario);
+    }
+
     public setTokenLocalStorage(response: any): void {
-        const { idUsuarioLogado, acessToken, tipoUsuario } = response;
+        const { idUsuarioLogado, acessToken, tipoUsuario, nomeUsuario } = response;
         localStorage.setItem(environment.token, acessToken);
         localStorage.setItem(environment.tipoUsuario, tipoUsuario);
         localStorage.setItem(environment.idUsuarioLogado, idUsuarioLogado);
+        localStorage.setItem(environment.nomeUsuario, nomeUsuario);
     }
 
     public removerTokenLocalStorage(): void {
         localStorage.removeItem(environment.token);
         localStorage.removeItem(environment.tipoUsuario);
         localStorage.removeItem(environment.idUsuarioLogado);
+        localStorage.removeItem(environment.nomeUsuario);
     }
 }

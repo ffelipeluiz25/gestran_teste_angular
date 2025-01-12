@@ -1,4 +1,5 @@
-﻿using GestranApi.DTOs.Checklist;
+﻿using GestranApi.DTOs;
+using GestranApi.DTOs.Checklist;
 using GestranApi.Models.Entidades;
 namespace GestranApi.Service.Interface
 {
@@ -6,5 +7,6 @@ namespace GestranApi.Service.Interface
     {
         List<ChecklistDTO> ListarChecklist(int IdTipoUsuario, int IdUsuarioLogado);
         ChecklistDTO InserirChecklist(ChecklistRequestDTO checklist);
+        RetornoApiDTO AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request);
     }
 }

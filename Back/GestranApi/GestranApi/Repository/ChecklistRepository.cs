@@ -1,8 +1,10 @@
 ﻿using GestranApi.Context;
+using GestranApi.DTOs;
 using GestranApi.DTOs.Checklist;
 using GestranApi.Helpers.Enumeradores;
 using GestranApi.Models.Entidades;
 using GestranApi.Repository.Interface;
+using System.Net.NetworkInformation;
 namespace GestranApi.Repository
 {
     public class ChecklistRepository : Repository<Checklist>, IChecklistRepository
@@ -54,6 +56,32 @@ namespace GestranApi.Repository
                         IdStatus = c.IdStatus,
                         IdUsuarioAlteracao = c.IdUsuarioAlteracao
                     }).ToList();
+        }
+
+        public RetornoApiDTO AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request)
+        {
+            try
+            {
+                var checklist = new Checklist
+                {
+                    Id = request.Id,
+                    IdUsuarioAlteracao = request.IdUsuarioAlteracao,
+                    IdUsuarioExecutor = request.IdUsuarioAlteracao,
+                    IdStatus = (int)EnumStatus.EXECUTANDO
+                };
+
+                _contexto.Checklist.Attach(checklist);
+                _contexto.Entry(checklist).Property(t => t.IdUsuarioAlteracao).IsModified = true;
+                _contexto.Entry(checklist).Property(t => t.IdUsuarioExecutor).IsModified = true;
+                _contexto.Entry(checklist).Property(t => t.IdStatus).IsModified = true;
+
+                _contexto.SaveChanges();
+                return new RetornoApiDTO(true);
+            }
+            catch (Exception ex)
+            {
+                return new RetornoApiDTO(false, ex.Message);
+            }
         }
 
     }

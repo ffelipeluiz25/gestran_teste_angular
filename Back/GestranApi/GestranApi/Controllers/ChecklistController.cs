@@ -53,6 +53,15 @@ namespace GestranApi.Controllers
             return Ok(retornoApi);
         }
 
+
+        [HttpPost("AssumeExecucaoChecklist")]
+        [Authorize]
+        public IActionResult AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request)
+        {
+            var retornoApi = _checklistService.AssumeExecucaoChecklist(request);
+            return Ok(retornoApi);
+        }
+
         [HttpPut]
         [Authorize]
         public IActionResult Atualizar(Checklist checklist)

@@ -4,4 +4,5 @@ export const environment = {
   token: 'token',
   tipoUsuario: 'tipoUsuario',
   idUsuarioLogado: 'idUsuarioLogado',
+  nomeUsuario: 'nomeUsuario',
 };
