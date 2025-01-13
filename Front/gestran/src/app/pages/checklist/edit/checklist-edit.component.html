@@ -5,7 +5,7 @@
         </h3>
     </div>
     <hr>
-    <form [formGroup]="formChecklist" (ngSubmit)="updateChecklist()">
+    <form [formGroup]="formChecklist" (ngSubmit)="salvar()">
         <div class="row">
             <div class="col-md-2">
                 <label class="form-label">Id</label>
@@ -14,28 +14,35 @@
             </div>
             <div class="col-md-4 mb-3">
                 <label class="form-label">Descrição</label>
-                <input type="text" class="form-control" formControlName="descricao">
-                <div class="form-text text-danger" *ngIf="isFormControlInvalid('descricao')">O descrição é obrigatório
+                <input type="text" class="form-control" formControlName="descricao"
+                    [disabled]="regraDesabilitarCampoDescricao()"
+                    [ngClass]="{ 'custom-disabled': regraDesabilitarCampoDescricao() }">
+                <div class="form-text text-danger" *ngIf="isFormControlInvalid('descricao')">O campo descrição é
+                    obrigatório
                 </div>
             </div>
             <div class="col-md-4 mb-3">
                 <h5>Itens para realizar checklist</h5>
-                <div class="mb-3" *ngIf="listaChecklistItem && listaChecklistItem.length > 0">
-                    <div *ngFor="let chkItem of listaChecklistItem">
-                        <label>
-                            <input type="checkbox" />
-                            {{ chkItem.nomeItem }}
-                        </label>
-                        <button type="button" class="btn btn-sm mb-1" title="Detalhes do Item"
-                            (click)="openModalDetalhesItem(detalhesItemModal, chkItem)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-                                <path
-                                    d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-                            </svg>
-                        </button>
-                        <br>
+                <div class="mb-3">
+                    <div formArrayName="checklist">
+                        <div *ngFor="let chkItem of checklistFormArray.controls; let i = index" [formGroupName]="i">
+                            <label>
+                                <input type="checkbox" *ngIf="mostraCheckbox"
+                                    [ngClass]="{ 'custom-disabled': habilitaCheckbox }" formControlName="executado" />
+                                {{ chkItem.value.nomeItem }}
+                            </label>
+
+                            <button type="button" class="btn btn-sm mb-1" title="Detalhes do Item"
+                                (click)="openModalDetalhesItem(detalhesItemModal, chkItem)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                                    <path
+                                        d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                                </svg>
+                            </button>
+                            <br>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -46,8 +53,13 @@
                     Voltar
                 </button>
             </div>
-            <div class="col-12 col-md-6 text-end">
-                <button type="submit" class="btn btn-primary" [disabled]="!formChecklist.valid">Salvar</button>
+            <div class="col-12 col-md-5 text-end">
+                <button type="button" (click)="reprovarChecklist()" class="btn btn-secondary"
+                    *ngIf="mostrarBotaoReprovar">Reprovar</button>
+            </div>
+            <div class="col-12 col-md-1 text-end">
+                <button type="submit" class="btn btn-primary"
+                    *ngIf="mostrarBotaoPrincipal">{{nomeBotaoAcaoTelaPrincipal}}</button>
             </div>
         </div>
     </form>

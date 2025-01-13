@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using GestranApi.DTOs;
 using GestranApi.DTOs.Checklist;
 using GestranApi.DTOs.Item;
@@ -44,14 +45,33 @@ namespace GestranApi.Service
                 checkListItem.Executado = false;
                 _checklistItemRepository.Inserir(checkListItem);
             }
-            
+
 
             return _mapper.Map<ChecklistDTO>(checklist);
         }
 
         public RetornoApiDTO AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request)
         {
-            return _checklistRepository.AssumeExecucaoChecklist(request);
+            var checklist = _checklistRepository.ListarPorId(request.Id);
+            if (checklist.IdUsuarioExecutor != null)
+                return new RetornoApiDTO(false, "O checklist já está sendo executado por outro executor!");
+
+            return _checklistRepository.AssumeExecucaoChecklist(request, checklist);
+        }
+
+        public RetornoApiDTO Atualizar(ChecklistAtualizarRequestDTO request)
+        {
+            return _checklistRepository.Atualizar(request);
+        }
+
+        public RetornoApiDTO AtualizarStatus(ChecklistAtualizarRequestDTO checklistRequest)
+        {
+            return _checklistRepository.AtualizarStatus(checklistRequest);
+        }
+
+        public RetornoApiDTO ExecutarChecklist(ChecklistExecutaRequestDTO checklistRequest)
+        {
+            return _checklistRepository.ExecutarChecklist(checklistRequest);
         }
     }
 }

@@ -8,5 +8,8 @@ namespace GestranApi.Service.Interface
         List<ChecklistDTO> ListarChecklist(int IdTipoUsuario, int IdUsuarioLogado);
         ChecklistDTO InserirChecklist(ChecklistRequestDTO checklist);
         RetornoApiDTO AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request);
+        RetornoApiDTO Atualizar(ChecklistAtualizarRequestDTO request);
+        RetornoApiDTO AtualizarStatus(ChecklistAtualizarRequestDTO checklistRequest);
+        RetornoApiDTO ExecutarChecklist(ChecklistExecutaRequestDTO checklistRequest);
     }
 }

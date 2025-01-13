@@ -32,5 +32,14 @@ namespace GestranApi.Repository
             return lista;
         }
 
+        public ChecklistItem ListarPorIdChecklistPorIdItem(int IdChecklist, int IdItem)
+        {
+            var checklistItem = (from chi in _contexto.ChecklistItem
+                                 where
+                                    chi.IdChecklist.Equals(IdChecklist)
+                                    && chi.IdItem.Equals(IdItem)
+                                 select chi).FirstOrDefault();
+            return checklistItem;
+        }
     }
 }

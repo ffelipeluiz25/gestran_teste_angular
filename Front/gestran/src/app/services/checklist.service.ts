@@ -6,6 +6,9 @@ import { environment } from '../../environments/environment';
 import { Checklist } from '../model/checklist.model';
 import { LocalStorageService } from './localstorage.service';
 import { Router } from '@angular/router';
+import { AssumeExecucaoChecklist } from '../model/assumeexecucaochecklist.model';
+import Swal from 'sweetalert2';
+import { ChecklistExecutaRequest } from '../model/ChecklistExecutaRequest.model';
 
 @Injectable({ providedIn: 'root', })
 
@@ -14,7 +17,7 @@ export class ChecklistService {
     constructor(private httpClient: HttpClient, private localStorageService: LocalStorageService, private route: Router) { }
 
     public listarchecklist(tipoUsuario: number, idUsuarioLogado: number): Observable<any> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const url = `${environment.baseUrlBackend}/checklist/listarchecklist?IdTipoUsuario=${tipoUsuario}&IdUsuarioLogado=${idUsuarioLogado}`;
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
@@ -26,7 +29,7 @@ export class ChecklistService {
     }
 
     public listarPorId(id: number): Observable<Checklist> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
         });
@@ -37,6 +40,10 @@ export class ChecklistService {
     }
 
     private mapToChecklist(data: any): Checklist {
+        return data;
+    }
+
+    private mapToDynamic(data: any): any {
         return data;
     }
 
@@ -55,7 +62,7 @@ export class ChecklistService {
     }
 
     public salvaNovo(checklist: Checklist): Observable<Checklist> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
         });
@@ -70,33 +77,54 @@ export class ChecklistService {
         )
     }
 
-    public update(checklist: Checklist): Observable<Checklist> {
-
-        const url = `${environment.baseUrlBackend}/checklist/${checklist.id}`
-        var token = localStorage.getItem(environment.token);
+    public atualizar(checklist: Checklist): Observable<Checklist> {
+        const url = `${environment.baseUrlBackend}/checklist`
+        var token = this.localStorageService.getToken();
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
         });
+        checklist.idUsuarioAlteracao = Number(this.localStorageService.getTipoUsuario());
         return this.httpClient.put(url, checklist, { headers }).pipe(
             map(this.mapToChecklist)
         )
     }
 
-    public assumirExecucaoChecklist(checklist: Checklist): Observable<Checklist> {
+    public executarChecklist(checklist: ChecklistExecutaRequest): Observable<any> {
+        const url = `${environment.baseUrlBackend}/checklist/executarchecklist`
+        var token = this.localStorageService.getToken();
+        const headers = new HttpHeaders({
+            Authorization: `Bearer ${token}`,
+        });
+        return this.httpClient.post(url, checklist, { headers }).pipe(
+            map(this.mapToDynamic)
+        )
+    }
 
-        const url = `${environment.baseUrlBackend}/checklist/assumirExecucaoChecklist`
-        var token = localStorage.getItem(environment.token);
+    public atualizarStatus(checklist: Checklist): Observable<Checklist> {
+        const url = `${environment.baseUrlBackend}/checklist/atualizarstatus`
+        var token = this.localStorageService.getToken();
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
         });
         checklist.idUsuarioAlteracao = Number(this.localStorageService.getTipoUsuario());
-        return this.httpClient.post(url, checklist, { headers }).pipe(
+        return this.httpClient.put(url, checklist, { headers }).pipe(
             map(this.mapToChecklist)
         )
     }
 
+    public assumirExecucaoChecklist(idChecklist: number): Observable<any> {
+        const url = `${environment.baseUrlBackend}/checklist/assumeexecucaochecklist`
+        var token = this.localStorageService.getToken();
+        const headers = new HttpHeaders({
+            Authorization: `Bearer ${token}`,
+        });
+        return this.httpClient.post(url, new AssumeExecucaoChecklist(idChecklist, Number(this.localStorageService.getTipoUsuario())), { headers }).pipe(
+            map(this.mapToDynamic)
+        )
+    }
+
     public delete(checkId: number): Observable<any> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const url = `${environment.baseUrlBackend}/checklist/${checkId}`;
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,

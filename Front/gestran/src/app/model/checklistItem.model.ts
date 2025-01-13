@@ -7,6 +7,7 @@ export class ChecklistItem {
     public idUsuarioAlteracao?: Number,
     public nomeUsuarioAlteracao?: string,
     public executado?: boolean,
-    public observacaoItem?: string) {
+    public observacaoItem?: string,
+    public isSelected?: boolean) {
   }
 }

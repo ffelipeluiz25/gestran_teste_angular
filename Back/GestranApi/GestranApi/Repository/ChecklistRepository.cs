@@ -1,6 +1,9 @@
-﻿using GestranApi.Context;
+﻿using AutoMapper;
+using Azure.Core;
+using GestranApi.Context;
 using GestranApi.DTOs;
 using GestranApi.DTOs.Checklist;
+using GestranApi.DTOs.Item;
 using GestranApi.Helpers.Enumeradores;
 using GestranApi.Models.Entidades;
 using GestranApi.Repository.Interface;
@@ -9,8 +12,13 @@ namespace GestranApi.Repository
 {
     public class ChecklistRepository : Repository<Checklist>, IChecklistRepository
     {
-        public ChecklistRepository(GestranDbContext contexto) : base(contexto)
+        private readonly IMapper _mapper;
+        private readonly IChecklistItemRepository _checklistItemRepository;
+
+        public ChecklistRepository(IMapper mapper, GestranDbContext contexto, IChecklistItemRepository checklistItemRepository) : base(contexto)
         {
+            _mapper = mapper;
+            _checklistItemRepository = checklistItemRepository;
         }
 
         public List<ChecklistDTO> ListarChecklist(int IdTipoUsuario, int IdUsuarioLogado)
@@ -46,8 +54,8 @@ namespace GestranApi.Repository
             return (from c in _contexto.Checklist
                     join s in _contexto.Status on c.IdStatus equals s.Id
                     where
-                         ((s.Id.Equals((int)EnumStatus.EXECUTANDO) && c.IdUsuarioExecutor.Equals(IdUsuarioLogado))
-                           || s.Id.Equals((int)EnumStatus.PENDENTE))
+                          c.IdUsuarioExecutor.Equals(IdUsuarioLogado)
+                           || s.Id.Equals((int)EnumStatus.PENDENTE)
                     select new ChecklistDTO()
                     {
                         Id = c.Id,
@@ -58,19 +66,16 @@ namespace GestranApi.Repository
                     }).ToList();
         }
 
-        public RetornoApiDTO AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request)
+        public RetornoApiDTO AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request, Checklist checklist)
         {
             try
             {
-                var checklist = new Checklist
-                {
-                    Id = request.Id,
-                    IdUsuarioAlteracao = request.IdUsuarioAlteracao,
-                    IdUsuarioExecutor = request.IdUsuarioAlteracao,
-                    IdStatus = (int)EnumStatus.EXECUTANDO
-                };
-
                 _contexto.Checklist.Attach(checklist);
+
+                checklist.IdUsuarioAlteracao = request.IdUsuarioAlteracao;
+                checklist.IdUsuarioExecutor = request.IdUsuarioAlteracao;
+                checklist.IdStatus = (int)EnumStatus.EXECUTANDO;
+
                 _contexto.Entry(checklist).Property(t => t.IdUsuarioAlteracao).IsModified = true;
                 _contexto.Entry(checklist).Property(t => t.IdUsuarioExecutor).IsModified = true;
                 _contexto.Entry(checklist).Property(t => t.IdStatus).IsModified = true;
@@ -84,5 +89,80 @@ namespace GestranApi.Repository
             }
         }
 
+        public RetornoApiDTO AtualizarStatus(ChecklistAtualizarRequestDTO request)
+        {
+            try
+            {
+                var checklist = _mapper.Map<Checklist>(request);
+                _contexto.Checklist.Attach(checklist);
+
+                _contexto.Entry(checklist).Property(t => t.IdStatus).IsModified = true;
+                _contexto.Entry(checklist).Property(t => t.IdUsuarioAlteracao).IsModified = true;
+
+                _contexto.SaveChanges();
+                return new RetornoApiDTO(true);
+            }
+            catch (Exception ex)
+            {
+                return new RetornoApiDTO(false, ex.Message);
+            }
+        }
+
+
+        public RetornoApiDTO Atualizar(ChecklistAtualizarRequestDTO request)
+        {
+            try
+            {
+                var checklist = _mapper.Map<Checklist>(request);
+                _contexto.Checklist.Attach(checklist);
+
+                _contexto.Entry(checklist).Property(t => t.Descricao).IsModified = true;
+                _contexto.Entry(checklist).Property(t => t.IdStatus).IsModified = true;
+                _contexto.Entry(checklist).Property(t => t.IdUsuarioAlteracao).IsModified = true;
+
+                _contexto.SaveChanges();
+
+                return new RetornoApiDTO(true);
+            }
+            catch (Exception ex)
+            {
+                return new RetornoApiDTO(false, ex.Message);
+            }
+        }
+
+        public RetornoApiDTO ExecutarChecklist(ChecklistExecutaRequestDTO checklistRequest)
+        {
+            try
+            {
+                var checklist = _mapper.Map<Checklist>(checklistRequest);
+                _contexto.Checklist.Attach(checklist);
+
+                _contexto.Entry(checklist).Property(t => t.IdStatus).IsModified = true;
+                _contexto.Entry(checklist).Property(t => t.IdUsuarioAlteracao).IsModified = true;
+
+                _contexto.SaveChanges();
+
+                if (checklistRequest.ListaItens.Count > 0)
+                {
+                    foreach (ChecklistItemExecucaoDTO item in checklistRequest.ListaItens)
+                    {
+                        var checklistItem = _checklistItemRepository.ListarPorId(item.Id);
+                        if (checklistItem != null)
+                        {
+                            _contexto.ChecklistItem.Attach(checklistItem);
+                            checklistItem.Executado = item.Executado;
+                            _contexto.Entry(checklistItem).Property(t => t.Executado).IsModified = true;
+                            _contexto.SaveChanges();
+                        }
+                    }
+                }
+
+                return new RetornoApiDTO(true);
+            }
+            catch (Exception ex)
+            {
+                return new RetornoApiDTO(false, ex.Message);
+            }
+        }
     }
 }

@@ -81,7 +81,7 @@ export class ItemComponent implements OnInit {
 
   closeModal(): void {
     if (this.modalNovoItem) {
-      this.modalNovoItem.close(); // Fecha a modal usando a referência global
+      this.modalNovoItem.close(); 
     }
   }
 

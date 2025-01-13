@@ -10,9 +10,12 @@ namespace GestranApi.AutoMapper
         {
             CreateMap<Checklist, ChecklistDTO>().ReverseMap();
             CreateMap<Checklist, ChecklistRequestDTO>().ReverseMap();
+            CreateMap<Checklist, ChecklistAtualizarRequestDTO>().ReverseMap();
+            CreateMap<Checklist, ChecklistExecutaRequestDTO>().ReverseMap();
 
             CreateMap<Item, ItemDTO>().ReverseMap();
             CreateMap<Item, ItemRequestDTO>().ReverseMap();
+
         }
     }
 }

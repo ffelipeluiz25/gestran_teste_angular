@@ -14,7 +14,7 @@ export class ItemService {
     constructor(private httpClient: HttpClient, private localStorageService: LocalStorageService, private route: Router) { }
 
     public listarTodos(): Observable<any> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const url = `${environment.baseUrlBackend}/Item/listartodos`;
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
@@ -26,7 +26,7 @@ export class ItemService {
     }
 
     public listById(id: number): Observable<Item> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
         });
@@ -55,7 +55,7 @@ export class ItemService {
     }
 
     public salvaNovo(Item: Item): Observable<Item> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
         });
@@ -72,7 +72,7 @@ export class ItemService {
     }
 
     public delete(checkId: number): Observable<any> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const url = `${environment.baseUrlBackend}/Item/${checkId}`;
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,

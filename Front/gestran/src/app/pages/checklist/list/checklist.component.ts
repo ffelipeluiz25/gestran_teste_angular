@@ -23,6 +23,8 @@ export class ChecklistComponent implements OnInit {
   public habilitaBotaoCadastro: boolean = false;
   public habilitaBotaoAssumeExecucao: boolean = false;
   public habilitaBotaoExclusao: boolean = false;
+  public isServidor: boolean = false;
+  public isExecutor: boolean = false;
   constructor(private checklistService: ChecklistService, private route: Router, private modalService: NgbModal, private localStorageService: LocalStorageService) { }
 
   ngOnInit(): void {
@@ -32,23 +34,65 @@ export class ChecklistComponent implements OnInit {
   public carregarTela() {
     let tipoUsuario = Number(this.localStorageService.getTipoUsuario());
     let idUsuarioLogado = Number(this.localStorageService.getIdUsuarioLogado());
-    if (tipoUsuario == 1){
+    if (tipoUsuario == 1) {
+      this.isServidor = true;
+      this.isExecutor = false;
       this.habilitaBotaoCadastro = true;
       this.habilitaBotaoExclusao = true;
     }
-    else
+    else {
+      this.isServidor = false;
+      this.isExecutor = true;
       this.habilitaBotaoAssumeExecucao = true;
+    }
 
     this.checklistService.listarchecklist(tipoUsuario, idUsuarioLogado).subscribe(
       res => { this.checklist = res; },
     )
   }
 
-  public executarChecklist(check: Checklist) {
+  public visibilidadeBotaoVisualizar(statusName: string | undefined): boolean {
+    if (this.isExecutor) {
+      switch (statusName) {
+        case 'Reprovado Supervisor':
+          {
+            return true;
+          }
+      }
+      return false;
+    }
+    return true;
+  }
 
+  public visibilidadeBotaoEditarPorTipoUsuarioPorStatus(statusName: string | undefined): boolean {
+    if (this.isServidor) {
+      switch (statusName) {
+        case 'Pendente':
+          {
+            return true;
+          }
+        case 'Finalizado Executor':
+          {
+            return true;
+          }
+      }
+    }
+    else if (this.isExecutor) {
+      switch (statusName) {
+        case 'Executando':
+          {
+            return true;
+          }
+      }
+    }
+
+    return false;
+  }
+
+  public executarChecklist(idChecklist: any, descricaoChecklist: string | undefined) {
     Swal.fire({
       title: 'Tem certeza?',
-      text: `Deseja assumir a execução do checklist de id: ${check.id}`,
+      text: `Deseja assumir a execução do checklist de id: ${idChecklist}`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -57,9 +101,14 @@ export class ChecklistComponent implements OnInit {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.checklistService.assumirExecucaoChecklist(check).subscribe(
+        this.checklistService.assumirExecucaoChecklist(idChecklist).subscribe(
           res => {
-            Swal.fire('Confirmado!', `Você agora é responsável pelo checklist ${check.descricao}!`, 'success');
+
+            if (res != null && res.sucesso)
+              Swal.fire('Confirmado!', `Você agora é responsável pelo checklist ${descricaoChecklist}!`, 'success');
+            else if (res != null && !res.sucesso)
+              Swal.fire('Atenção!', res.mensagem, 'error');
+
             this.carregarTela();
           },
           err => {

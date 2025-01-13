@@ -71,12 +71,10 @@ export class ChecklistNewComponent implements OnInit, AfterViewInit {
         this.novoChecklist.emit(this.mapToChecklist(res));
       },
       err => {
-        console.log(err);
         Swal.fire('Cancelado!', 'Erro! Verifique os campos obrigatórios ao salvar novo checklist.', 'error');
       }
     )
 
-    console.log(this.formChecklist.value);
   }
 
   private validFormulario(): string {

@@ -21,6 +21,8 @@ namespace GestranApi.Controllers
             _checklistService = checklistService;
         }
 
+        #region Metodos Padrao
+
         [HttpGet("ListarChecklist")]
         [Authorize]
         public IActionResult ListarChecklist(int IdTipoUsuario, int IdUsuarioLogado)
@@ -53,20 +55,11 @@ namespace GestranApi.Controllers
             return Ok(retornoApi);
         }
 
-
-        [HttpPost("AssumeExecucaoChecklist")]
-        [Authorize]
-        public IActionResult AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request)
-        {
-            var retornoApi = _checklistService.AssumeExecucaoChecklist(request);
-            return Ok(retornoApi);
-        }
-
         [HttpPut]
         [Authorize]
-        public IActionResult Atualizar(Checklist checklist)
+        public IActionResult Atualizar(ChecklistAtualizarRequestDTO checklistRequest)
         {
-            var retornoApi = _checklistService.Atualizar(checklist);
+            var retornoApi = _checklistService.Atualizar(checklistRequest);
             return Ok(retornoApi);
         }
 
@@ -77,6 +70,36 @@ namespace GestranApi.Controllers
             _checklistService.Deletar(Id);
             return Ok();
         }
+
+        #endregion
+
+        #region Metodos Customizados
+
+        [HttpPost("AssumeExecucaoChecklist")]
+        [Authorize]
+        public IActionResult AssumeExecucaoChecklist(AssumeExecucaoChecklistRequestDTO request)
+        {
+            var retornoApi = _checklistService.AssumeExecucaoChecklist(request);
+            return Ok(retornoApi);
+        }
+
+        [HttpPost("ExecutarChecklist")]
+        [Authorize]
+        public IActionResult ExecutarChecklist(ChecklistExecutaRequestDTO checklistRequest)
+        {
+            var retornoApi = _checklistService.ExecutarChecklist(checklistRequest);
+            return Ok(retornoApi);
+        }
+
+        [HttpPut("AtualizarStatus")]
+        [Authorize]
+        public IActionResult AtualizarStatus(ChecklistAtualizarRequestDTO checklistRequest)
+        {
+            var retornoApi = _checklistService.AtualizarStatus(checklistRequest);
+            return Ok(retornoApi);
+        }
+
+        #endregion
 
     }
 }

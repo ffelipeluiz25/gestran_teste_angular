@@ -5,15 +5,16 @@ import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
 import { ChecklistItem } from '../model/checklistItem.model';
+import { LocalStorageService } from './localstorage.service';
 
 @Injectable({ providedIn: 'root', })
 
 export class ChecklistItemService {
 
-    constructor(private httpClient: HttpClient, private route: Router) { }
+    constructor(private httpClient: HttpClient, private route: Router, private localStorageService: LocalStorageService) { }
 
     public listarPorIdChecklist(idChecklist: number): Observable<any> {
-        var token = localStorage.getItem(environment.token);
+        var token = this.localStorageService.getToken();
         const url = `${environment.baseUrlBackend}/checklistitem/listarporidchecklist/${idChecklist}`;
         const headers = new HttpHeaders({
             Authorization: `Bearer ${token}`,
